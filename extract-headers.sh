@@ -18,7 +18,7 @@ do
       echo "    return false;"
       echo "}"
       echo
-      echo "static const char *htc_"$name"_properties = "
+      echo "static const char *htc_"$name"_properties ="
       (
 	grep ^ro.build.fingerprint $i
 	grep ^ro.build.product $i
@@ -27,7 +27,7 @@ do
 	egrep -v '^[[:space:]]*#' $i | \
 	    egrep '(radio|ril|telephony|\.phone|gsm|cdma|svlte|gps).*=' | \
 	    egrep -v ^rild.libpath=
-      ) | sed 's/.*/"&\\n"/'
+      ) | sed 's/.*/    "&\\n"/'
       echo ";"
    ) > headers/htc-"$name".h
 done
