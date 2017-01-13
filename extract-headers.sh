@@ -13,7 +13,7 @@ do
       echo "static bool is_variant_$name(std::string bootcid) {"
       for cid in $cidlist
       do
-	echo '    if (HAS_SUBSTRING(bootcid, "'$cid'")) return true;'
+	echo '    if (bootcid == "'$cid'") return true;'
       done
       echo "    return false;"
       echo "}"
