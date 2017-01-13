@@ -6,11 +6,6 @@ for i in $*
 do
    echo "Starting $i"
    name=`basename $i | sed 's/-.*//'`
-   if [ "$name" = "verizon" -o "$name" = "sprint" ]; then
-     type=cdma
-   else
-     type=gsm
-   fi
    cidlist=`grep cidlist= $i | cut -d '=' -f 2 | sed 's/,/ /g'`
    sku=`grep ro.build.sku= $i | cut -d '=' -f 2`
    (
@@ -18,7 +13,7 @@ do
       echo "static bool is_variant_$name(std::string bootcid) {"
       for cid in $cidlist
       do
-	echo '    if (bootcid == "'$cid'") return true;'
+	echo '    if (HAS_SUBSTRING(bootcid, "'$cid'")) return true;'
       done
       echo "    return false;"
       echo "}"
@@ -32,8 +27,7 @@ do
 	egrep -v '^[[:space:]]*#' $i | \
 	    egrep '(radio|ril|telephony|\.phone|gsm|cdma|svlte|gps).*=' | \
 	    egrep -v ^rild.libpath=
-      ) | if [ "$type" = "gsm" ]; then egrep -v lteOnCdmaDevice ; else cat ; fi |
-	sed 's/.*/    "&\\n"/'
+      ) | sed 's/.*/    "&\\n"/'
       echo ";"
    ) > headers/htc-"$name".h
 done
